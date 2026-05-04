@@ -1,0 +1,141 @@
+// 濟州島員工旅遊資料 (2026/5/21–5/25)
+window.TRIP = {
+  title: '山海人文．品味濟州',
+  subtitle: '濟州風景・人文・美食五日遊',
+  dates: '2026.05.21 – 05.25',
+  org: '資通服科福委會',
+  flights: {
+    out:  { code: 'IT-654', from: '桃園 TPE', to: '濟州 CJU', dep: '07:05', arr: '10:00', date: '5/21 (四)', airline: '台灣虎航' },
+    back: { code: 'IT-655', from: '濟州 CJU', to: '桃園 TPE', dep: '11:00', arr: '12:15', date: '5/25 (一)', airline: '台灣虎航' },
+  },
+  budget: { total: 40000, spent: 0 },
+  rate: 0.0228,
+  days: [
+    {
+      n: 1, date: '5/21 四', title: '抵達・市區漫遊',
+      hotel: 'Hotel Shalom Jeju (四星市區)',
+      meals: { lunch: '開城會館・鮑魚人蔘雞', dinner: '燒烤五花肉 + 韓式年糕 + 冬粉吃到飽' },
+      stops: [
+        { time: '07:05', name: '桃園機場 → 濟州', type: 'flight', desc: '虎航 IT-654' },
+        { time: '11:30', name: '梨湖紅白馬燈塔', type: 'sight',  desc: '海邊馬造型燈塔,可愛打卡點' },
+        { time: '14:00', name: '中央地下購物街', type: 'shop',   desc: '衣服飾品鞋子化妝品集散地' },
+        { time: '15:30', name: '東門市場',       type: 'shop',   desc: '濟州代表市場,海產生魚片便宜' },
+        { time: '17:00', name: '觀德庭・牧官衙韓服體驗', type: 'sight', desc: '穿韓服漫步古蹟 2 小時' },
+        { time: '20:00', name: '漢拏樹木園夜市', type: 'shop',   desc: '夜市美食・自由藝術市場' },
+      ],
+    },
+    {
+      n: 2, date: '5/22 五', title: '瀑布・茶園・媒體藝術',
+      hotel: 'Hotel Shalom Jeju (四星市區)',
+      meals: { lunch: '馬鈴薯豬骨湯 + 海苔炒飯', dinner: '海鮮火鍋 + 季節小菜' },
+      stops: [
+        { time: '09:00', name: '天帝淵瀑布',           type: 'sight', desc: '三段式瀑布・仙臨橋' },
+        { time: '11:00', name: '噢雪綠茶博物館',       type: 'sight', desc: '雪綠茶品牌博物館' },
+        { time: '14:00', name: 'HAPPY TOWN 摩托車秀',  type: 'show',  desc: '一小時極限特技表演' },
+        { time: '16:00', name: 'Arte Museum Jeju',     type: 'sight', desc: '沉浸式媒體藝術,10 個主題展區' },
+        { time: '18:30', name: '泰迪熊野生動物王國',   type: 'sight', desc: '贈送泰迪熊吊飾一隻 🧸' },
+      ],
+    },
+    {
+      n: 3, date: '5/23 六', title: '世界遺產・日出峰',
+      hotel: 'Regent Marine The Blue (海濱)',
+      meals: { lunch: '豬肉魷魚壽喜燒 + 漢拿山炒飯', dinner: '明倫進士・烤排骨吃到飽' },
+      stops: [
+        { time: '09:00', name: '李仲燮藝術街',     type: 'sight', desc: '紀念畫家李仲燮的咖啡藝術街' },
+        { time: '11:00', name: '西歸浦傳統市場',   type: 'shop',  desc: '60 年歷史拱型長廊商店街' },
+        { time: '14:00', name: '城山日出峰',       type: 'sight', desc: '世界遺產火山口,登頂約 30 分' },
+        { time: '17:00', name: 'Ecoland 歐洲森林樂園', type: 'sight', desc: '英式小火車漫遊' },
+      ],
+    },
+    {
+      n: 4, date: '5/24 日', title: '漢拏山・龍頭岩・汗蒸幕',
+      hotel: 'Regent Marine The Blue (海濱)',
+      meals: { lunch: '烤白帶魚+奶油鮑魚+海帶湯', dinner: '豪華海鮮嫩雞鮑魚鍋 (4人/鍋 ₩88,000)' },
+      stops: [
+        { time: '09:00', name: '漢拏山國家公園', type: 'sight', desc: '海拔 1950m,韓國三神山' },
+        { time: '11:30', name: '馬放牧地',       type: 'sight', desc: '濟州馬天然紀念物' },
+        { time: '14:30', name: '龍頭岩',         type: 'sight', desc: '海邊巨龍石形' },
+        { time: '15:30', name: '龍淵吊橋',       type: 'sight', desc: '瀛洲十景之龍淵夜帆' },
+        { time: '17:00', name: '龍頭岩海水汗蒸幕', type: 'show', desc: '韓國獨特洗澡文化體驗' },
+      ],
+    },
+    {
+      n: 5, date: '5/25 一', title: '回家',
+      hotel: '溫暖的家 ❤️',
+      meals: { lunch: '機上簡餐', dinner: '—' },
+      stops: [
+        { time: '08:00', name: '濟州國際機場',   type: 'flight', desc: '辦理出境手續' },
+        { time: '11:00', name: '濟州 → 桃園',    type: 'flight', desc: '虎航 IT-655' },
+        { time: '12:15', name: '抵達桃園・賦歸', type: 'flight', desc: '結束五天旅程' },
+      ],
+    },
+  ],
+  expenses: [],
+  shopping: [
+    { cat: '美食伴手', items: [
+      { id: 's1', name: '橘子巧克力',         est: '₩6,000–10,000', where: '中央地下街・機場免稅', done: false },
+      { id: 's2', name: '漢拏峰柑(果乾)',     est: '₩15,000',       where: '東門 / 西歸浦市場',     done: false },
+      { id: 's3', name: '雪綠茶禮盒',         est: '₩40,000',       where: '噢雪綠茶博物館',       done: false },
+      { id: 's4', name: '濟州海苔',           est: '₩20,000',       where: '西歸浦市場',           done: false },
+      { id: 's5', name: '濟州燒酒(漢拏山)',   est: '₩2,500/瓶',     where: '便利商店',             done: false },
+    ]},
+    { cat: '美妝保養', items: [
+      { id: 's6', name: '濟州火山泥面膜',     est: '₩1,000/片',     where: '中央地下街',           done: false },
+      { id: 's7', name: '馬油護手霜',         est: '₩8,000',        where: '機場 / 中央街',         done: false },
+      { id: 's8', name: 'innisfree 綠茶系列', est: '₩15,000+',      where: '中央地下街',           done: false },
+    ]},
+    { cat: '紀念小物', items: [
+      { id: 's9',  name: '海女明信片',        est: '₩3,000',        where: '日出峰 / 龍頭岩',       done: false },
+      { id: 's10', name: '泰迪熊吊飾',        est: '贈送',          where: '泰迪熊王國 (含)',       done: false },
+      { id: 's11', name: '濟州石頭爺爺擺飾',  est: '₩10,000',       where: '景點商店',             done: false },
+    ]},
+  ],
+  notices: {
+    pre: [
+      { t: '護照效期 6 個月以上',    d: '從回國日 5/25 起算需至 11/25 仍有效' },
+      { t: '韓國 K-ETA 電子簽證',    d: '出發前至少 72 小時上 k-eta.go.kr 申請' },
+      { t: '行李限重',               d: '虎航託運 20kg、手提 10kg;液體 100ml/瓶、總計 1L' },
+      { t: '電壓轉接頭',             d: '韓國 220V/圓形雙插孔,需 C 型轉接頭' },
+      { t: '常備藥品',               d: '感冒藥、腸胃藥、暈車藥(漢拏山山路)' },
+    ],
+    pack: [
+      { t: '護照 + K-ETA 紙本備份',           done: false },
+      { t: '輕便外套(5月日均 15–22°C)',       done: false },
+      { t: '運動鞋(日出峰、漢拏山要走)',       done: false },
+      { t: '泳具(汗蒸幕內可用)',              done: false },
+      { t: '小額韓元現金(市場攤販)',          done: false },
+      { t: '行動電源(飛機可手提)',            done: false },
+      { t: '防曬乳・墨鏡',                     done: false },
+      { t: '雨具(5月偶陣雨)',                 done: false },
+    ],
+    rules: [
+      '集合時間請務必準時,遲到全車等',
+      '車上會推銷當地土特產,但不進購物站',
+      '單人住宿補房差 NT$6,500',
+      '確認成團繳費後一律不接受取消退費',
+      '未報名者切勿隨團出遊',
+    ],
+    insurance: {
+      contract: '旅遊契約責任險 NT$200 萬(含 20 萬醫療)',
+      personal: '建議自行加保旅遊平安險',
+    },
+    emergency: [
+      { name: '領隊',         phone: '0912-XXX-XXX' },
+      { name: '當地導遊',     phone: '+82-10-XXXX-XXXX' },
+      { name: '駐韓國代表處', phone: '+82-2-6329-6000' },
+      { name: '韓國報案',     phone: '112' },
+      { name: '韓國救護',     phone: '119' },
+    ],
+    weather: { range: '15 – 22°C', rain: '偶陣雨', tip: '洋蔥式穿搭,準備薄外套' },
+    refund: {
+      threshold: '單筆消費 ₩15,000 以上可退稅',
+      where:     '機場退稅機 (Global Tax Free / Global Blue)',
+      docs:      ['護照', '購物退稅單', '退稅商品(未拆封)'],
+    },
+  },
+  contacts: [
+    { name: '金憶如', ext: '15690' },
+    { name: '陳玫蘭', ext: '14060' },
+    { name: '尹嘉琪', ext: '12328' },
+  ],
+};
