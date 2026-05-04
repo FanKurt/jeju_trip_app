@@ -2,7 +2,7 @@
 <html lang="zh-TW">
 <head>
   <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
   <meta name="apple-mobile-web-app-capable" content="yes"/>
   <meta name="apple-mobile-web-app-status-bar-style" content="default"/>
   <meta name="theme-color" content="#FAF7F2"/>
@@ -57,8 +57,10 @@ function tripDayInfo() {
   return { idx: diff, phase: 'live' };
 }
 
-/* ---------- localStorage hook ---------- */
-function useLocalState(key, initial) {
+/* ---------- localStorage hook (with versioned key) ---------- */
+const STORAGE_VERSION = 'v2'; // 改 schema 時 bump,自動丟棄舊資料避免畫面壞
+function useLocalState(rawKey, initial) {
+  const key = `${rawKey}.${STORAGE_VERSION}`;
   const [val, setVal] = useState(() => {
     try {
       const raw = localStorage.getItem(key);
@@ -114,7 +116,28 @@ function Toast({ msg, kind, onDone }) {
     return () => clearTimeout(t);
   }, [msg, onDone]);
   if (!msg) return null;
-  return <div className={`toast ${kind || ''}`}>{msg}</div>;
+  return <div className={`toast ${kind || ''}`} role="status" aria-live="polite">{msg}</div>;
+}
+
+/* ---------- Confirm Modal ---------- */
+function ConfirmModal({ title, body, confirmText = '確認', cancelText = '取消', kind = 'primary', onConfirm, onClose }) {
+  return (
+    <div className="modal-backdrop" onClick={onClose} role="dialog" aria-modal="true">
+      <div className="modal-sheet" onClick={(e) => e.stopPropagation()}>
+        <div className="modal-body">
+          <h2 style={{ margin: '0 0 8px', fontSize: 18 }}>{title}</h2>
+          {body && <div style={{ fontSize: 14, color: 'var(--gray-700)', lineHeight: 1.6 }}>{body}</div>}
+        </div>
+        <div className="actions">
+          <button className="btn btn-soft" onClick={onClose}>{cancelText}</button>
+          <button className="btn btn-primary" onClick={onConfirm}
+            style={kind === 'danger' ? { background: 'var(--danger)' } : undefined}>
+            {confirmText}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 /* ---------- App Context ---------- */
@@ -192,6 +215,7 @@ function HomeScreen() {
   const { T, expenses, budget, shopping, openDay, goTab } = useApp();
   const trip = tripDayInfo();
   const today = T.days[trip.idx];
+  const sightCount = today.stops.filter(s => s.type !== 'flight').length;
   const heroMeta = trip.phase === 'pre'  ? `出發倒數 ${trip.daysUntil} 天 · 濟州島`
                  : trip.phase === 'post' ? `旅程已結束 · 濟州島`
                  : `DAY ${today.n} OF 5 · 濟州島`;
@@ -222,12 +246,12 @@ function HomeScreen() {
           <div style={{ marginTop: 18, display: 'flex', gap: 10, alignItems: 'center',
             background: 'rgba(255,255,255,0.55)', backdropFilter: 'blur(10px)',
             borderRadius: 14, padding: '10px 14px' }}>
-            <div style={{ width: 22, height: 22, color: 'var(--citrus-700)', display: 'flex' }}>{Icons.sun}</div>
+            <div style={{ width: 22, height: 22, color: 'var(--citrus-700)', display: 'flex' }} aria-hidden="true">{Icons.sun}</div>
             <div style={{ flex: 1, fontSize: 13, color: 'var(--ink-soft)' }}>
-              <strong className="num" style={{ fontSize: 16, color: 'var(--ink)' }}>19°</strong>
-              <span style={{ color: 'var(--gray-500)', marginLeft: 6 }}>多雲偶陣雨 · 濟州市</span>
+              <strong className="num" style={{ fontSize: 15, color: 'var(--ink)' }}>{T.notices.weather.range}</strong>
+              <span style={{ color: 'var(--gray-500)', marginLeft: 8 }}>{T.notices.weather.rain}</span>
             </div>
-            <div style={{ fontSize: 11, color: 'var(--gray-500)' }} className="num">15° / 22°</div>
+            <div style={{ fontSize: 11, color: 'var(--gray-500)' }}>5 月平均</div>
           </div>
         </div>
 
@@ -241,7 +265,7 @@ function HomeScreen() {
             <div style={{ flex: 1 }}>
               <div style={{ fontSize: 16, fontWeight: 600 }}>{today.title}</div>
               <div style={{ fontSize: 12, color: 'var(--gray-500)', marginTop: 2 }}>
-                {today.stops.length} 個景點 · {today.hotel.split(' (')[0]}
+                {sightCount} 個景點 · {today.hotel.split(' (')[0]}
               </div>
             </div>
           </div>
@@ -421,6 +445,9 @@ function ItineraryScreen() {
 function DayDetailScreen({ dayN }) {
   const { T, goBack, openStop } = useApp();
   const d = T.days.find(x => x.n === dayN) || T.days[1];
+  const trip = tripDayInfo();
+  const isPreview = trip.phase === 'pre' || (trip.phase === 'live' && d.n !== trip.idx + 1);
+  const featured = d.stops.find(s => s.type !== 'flight') || d.stops[0];
 
   return (
     <div className="app screen-fade">
@@ -429,19 +456,25 @@ function DayDetailScreen({ dayN }) {
           background: 'linear-gradient(180deg, var(--sea-300) 0%, var(--sea-100) 100%)',
           padding: '20px 20px 24px', position: 'relative',
         }}>
-          <div onClick={goBack} style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 14,
-            color: 'var(--sea-900)', fontWeight: 600, cursor: 'pointer', padding: '4px 8px 4px 0' }}>
-            <div style={{ width: 18, height: 18, display: 'flex' }}>{Icons.chevLeft}</div>
+          <button onClick={goBack} aria-label="返回行程" style={{
+            display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 14,
+            color: 'var(--sea-900)', fontWeight: 600, cursor: 'pointer',
+            padding: '4px 10px 4px 0', background: 'transparent', border: 'none',
+            fontFamily: 'var(--font-cn)' }}>
+            <div style={{ width: 18, height: 18, display: 'flex' }} aria-hidden="true">{Icons.chevLeft}</div>
             <span>行程</span>
-          </div>
+          </button>
           <div style={{ marginTop: 12, display: 'flex', alignItems: 'flex-end', gap: 14 }}>
             <div className="num" style={{
               fontSize: 64, fontWeight: 700, color: 'var(--sea-900)',
               lineHeight: 0.85, letterSpacing: '-0.04em',
             }}>{String(d.n).padStart(2, '0')}</div>
             <div style={{ paddingBottom: 6 }}>
-              <div style={{ fontSize: 11, color: 'var(--sea-700)', fontWeight: 600,
-                letterSpacing: '0.12em' }} className="num">DAY · {d.date}</div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                <span style={{ fontSize: 11, color: 'var(--sea-700)', fontWeight: 600,
+                  letterSpacing: '0.12em' }} className="num">DAY · {d.date}</span>
+                {isPreview && <Pill kind="gray">預覽</Pill>}
+              </div>
               <h1 style={{ fontSize: 22, fontWeight: 700, margin: '4px 0 0',
                 color: 'var(--ink)', letterSpacing: '-0.02em' }}>{d.title}</h1>
             </div>
@@ -452,7 +485,10 @@ function DayDetailScreen({ dayN }) {
         </div>
 
         <div style={{ margin: '12px 16px 0', borderRadius: 16, overflow: 'hidden' }}>
-          <ImgPlaceholder label={d.stops[0]?.name || ''} h={140}/>
+          {featured?.image
+            ? <img src={featured.image} alt={featured.name} loading="lazy" decoding="async"
+                style={{ width: '100%', height: 140, objectFit: 'cover', display: 'block' }}/>
+            : <ImgPlaceholder label={featured?.name || d.title} h={140}/>}
         </div>
 
         <div className="sec-label">行程時間軸</div>
@@ -519,10 +555,12 @@ function DayDetailScreen({ dayN }) {
             <div style={{ fontSize: 12, color: 'var(--gray-500)', marginTop: 2 }}>
               {d.hotel.includes('(') ? d.hotel.match(/\(([^)]+)\)/)[1] : ''}
             </div>
-            <div style={{ display: 'flex', gap: 6, marginTop: 10 }}>
-              <button className="btn btn-soft" style={{ flex: 1, fontSize: 13, padding: '8px 12px' }}>地圖</button>
-              <button className="btn btn-soft" style={{ flex: 1, fontSize: 13, padding: '8px 12px' }}>飯店資訊</button>
-            </div>
+            {d.hotel !== '溫暖的家 ❤️' && (
+              <button className="btn btn-soft" style={{ width: '100%', fontSize: 13, padding: '8px 12px', marginTop: 10 }}
+                onClick={() => window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(d.hotel.split(' (')[0])}`, '_blank', 'noopener,noreferrer')}>
+                在 Google Maps 開啟
+              </button>
+            )}
           </div>
         </div>
         <div style={{ height: 16 }}/>
@@ -533,10 +571,19 @@ function DayDetailScreen({ dayN }) {
 
 /* ---------- Stop Detail ---------- */
 function StopDetailScreen({ dayN, stopIdx }) {
-  const { T, openDay } = useApp();
+  const { T, openDay, openStop } = useApp();
   const d = T.days.find(x => x.n === dayN);
   const s = d?.stops[stopIdx];
   const [imgError, setImgError] = useState(false);
+
+  // 上下站(只算非 flight)
+  const navStops = (d?.stops || []).map((x, i) => ({ x, i })).filter(o => o.x.type !== 'flight');
+  const cur = navStops.findIndex(o => o.i === stopIdx);
+  const prev = cur > 0 ? navStops[cur - 1] : null;
+  const next = cur >= 0 && cur < navStops.length - 1 ? navStops[cur + 1] : null;
+
+  // reset 圖片狀態當切換景點
+  useEffect(() => { setImgError(false); }, [dayN, stopIdx]);
 
   if (!s) {
     return (
@@ -564,27 +611,46 @@ function StopDetailScreen({ dayN, stopIdx }) {
     <div className="app screen-fade">
       <div className="app-content">
         {/* Hero image */}
-        <div style={{ position: 'relative', height: 240, background: 'var(--sea-100)' }}>
+        <div style={{ position: 'relative', height: 240,
+          background: s.type === 'shop'
+            ? 'linear-gradient(135deg, var(--citrus-300) 0%, var(--citrus-100) 100%)'
+            : 'linear-gradient(135deg, var(--sea-300) 0%, var(--sea-100) 100%)' }}>
           {s.image && !imgError ? (
             <img src={s.image} alt={s.name}
+              loading="lazy" decoding="async"
               onError={() => setImgError(true)}
               style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}/>
           ) : (
-            <ImgPlaceholder label={s.name} h={240} tone={s.type === 'shop' ? 'citrus' : 'sea'}/>
+            <div style={{ width: '100%', height: '100%', display: 'flex',
+              alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: 8,
+              padding: 20 }}>
+              <div style={{ width: 56, height: 56, borderRadius: 16,
+                background: 'rgba(255,255,255,0.55)', backdropFilter: 'blur(8px)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                color: s.type === 'shop' ? 'var(--citrus-700)' : 'var(--sea-700)' }} aria-hidden="true">
+                <div style={{ width: 30, height: 30 }}>{
+                  s.type === 'shop' ? Icons.bag :
+                  s.type === 'show' ? Icons.sun :
+                  Icons.pin
+                }</div>
+              </div>
+              <div style={{ fontSize: 18, fontWeight: 700, color: 'var(--ink)',
+                textAlign: 'center', letterSpacing: '-0.01em' }}>{s.name}</div>
+            </div>
           )}
           {/* Back button */}
-          <button onClick={back} style={{
-            position: 'absolute', top: 14, left: 14,
+          <button onClick={back} aria-label="返回 Day Detail" style={{
+            position: 'absolute', top: 'calc(14px + env(safe-area-inset-top))', left: 14,
             width: 36, height: 36, borderRadius: 18,
             background: 'rgba(255,255,255,0.9)', border: 'none',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             backdropFilter: 'blur(8px)', cursor: 'pointer',
             boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
           }}>
-            <div style={{ width: 18, height: 18, color: 'var(--ink)' }}>{Icons.chevLeft}</div>
+            <div style={{ width: 18, height: 18, color: 'var(--ink)' }} aria-hidden="true">{Icons.chevLeft}</div>
           </button>
           {typeLabel && (
-            <div style={{ position: 'absolute', top: 16, right: 14 }}>
+            <div style={{ position: 'absolute', top: 'calc(16px + env(safe-area-inset-top))', right: 14 }}>
               <Pill kind={s.type === 'shop' ? 'citrus' : ''}>{typeLabel}</Pill>
             </div>
           )}
@@ -671,6 +737,30 @@ function StopDetailScreen({ dayN, stopIdx }) {
           </>
         )}
 
+        {/* 上下站導航 */}
+        {(prev || next) && (
+          <div style={{ display: 'flex', gap: 10, padding: '20px 16px 8px' }}>
+            {prev ? (
+              <button className="btn btn-soft" style={{ flex: 1, padding: '10px 12px',
+                flexDirection: 'column', alignItems: 'flex-start', textAlign: 'left' }}
+                onClick={() => openStop(d.n, prev.i)}>
+                <span style={{ fontSize: 11, color: 'var(--gray-700)' }}>← 上一站 {prev.x.time}</span>
+                <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--sea-900)',
+                  whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '100%' }}>{prev.x.name}</span>
+              </button>
+            ) : <div style={{ flex: 1 }}/>}
+            {next ? (
+              <button className="btn btn-soft" style={{ flex: 1, padding: '10px 12px',
+                flexDirection: 'column', alignItems: 'flex-end', textAlign: 'right' }}
+                onClick={() => openStop(d.n, next.i)}>
+                <span style={{ fontSize: 11, color: 'var(--gray-700)' }}>下一站 {next.x.time} →</span>
+                <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--sea-900)',
+                  whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '100%' }}>{next.x.name}</span>
+              </button>
+            ) : <div style={{ flex: 1 }}/>}
+          </div>
+        )}
+
         <div style={{ height: 24 }}/>
       </div>
     </div>
@@ -688,6 +778,7 @@ const CAT_META = {
 function ExpensesScreen() {
   const { T, expenses, budget, rate, addExpense, deleteExpense } = useApp();
   const [showAdd, setShowAdd] = useState(false);
+  const [pendingDelete, setPendingDelete] = useState(null);
 
   const totals = useMemo(() => expenses.reduce((s, e) => {
     s.krw += e.krw; s.twd += e.twd;
@@ -788,7 +879,7 @@ function ExpensesScreen() {
               const m = CAT_META[e.cat] || CAT_META.other;
               return (
                 <div key={e.id} className="exp-row"
-                  onClick={() => { if (confirm(`刪除「${e.name}」?`)) deleteExpense(e.id); }}
+                  onClick={() => setPendingDelete(e)}
                   style={{ cursor: 'pointer' }}>
                   <div className="exp-icon" style={{ background: m.bg, color: m.fg }}>
                     <div style={{ width: 18, height: 18 }}>{m.icon}</div>
@@ -819,59 +910,72 @@ function ExpensesScreen() {
       </div>
 
       {showAdd && <AddExpenseModal onClose={() => setShowAdd(false)} onSave={(e) => { addExpense(e); setShowAdd(false); }} rate={rate}/>}
+      {pendingDelete && (
+        <ConfirmModal
+          title="刪除這筆紀錄?"
+          body={`「${pendingDelete.name}」  ₩${pendingDelete.krw.toLocaleString()}`}
+          confirmText="刪除"
+          kind="danger"
+          onClose={() => setPendingDelete(null)}
+          onConfirm={() => { deleteExpense(pendingDelete.id); setPendingDelete(null); }}
+        />
+      )}
     </div>
   );
 }
 
 function AddExpenseModal({ onClose, onSave, rate }) {
+  const trip = tripDayInfo();
   const [krw, setKrw] = useState('');
   const [name, setName] = useState('');
   const [cat, setCat] = useState('food');
-  const [day, setDay] = useState(2);
+  const [day, setDay] = useState(trip.idx + 1);
   const twd = krw ? Math.round(Number(krw) * rate) : 0;
 
   const submit = () => {
     if (!name.trim() || !krw) return;
     const now = new Date();
     const time = now.toTimeString().slice(0, 5);
-    onSave({ day: Number(day), time, cat, name: name.trim(), krw: Number(krw), twd });
+    onSave({ day, time, cat, name: name.trim(), krw: Number(krw), twd });
   };
 
   return (
-    <div className="modal-backdrop" onClick={onClose}>
+    <div className="modal-backdrop" onClick={onClose} role="dialog" aria-modal="true" aria-labelledby="exp-title">
       <div className="modal-sheet" onClick={(e) => e.stopPropagation()}>
-        <h3>新增花費</h3>
-        <div className="field">
-          <label>金額 (₩ 韓元)</label>
-          <input className="num-input" type="number" inputMode="numeric"
-            value={krw} onChange={(e) => setKrw(e.target.value)} placeholder="0" autoFocus/>
-          {krw && <div className="num" style={{ fontSize: 12, color: 'var(--gray-500)', marginTop: 4 }}>
-            ≈ NT$ {twd.toLocaleString()}
-          </div>}
-        </div>
-        <div className="field">
-          <label>名稱</label>
-          <input value={name} onChange={(e) => setName(e.target.value)} placeholder="例:雪綠茶禮盒"/>
-        </div>
-        <div style={{ display: 'flex', gap: 10 }}>
-          <div className="field" style={{ flex: 1 }}>
-            <label>類別</label>
-            <select value={cat} onChange={(e) => setCat(e.target.value)}>
-              <option value="food">餐食</option>
-              <option value="shop">購物</option>
-              <option value="ticket">門票</option>
-              <option value="other">其他</option>
-            </select>
+        <div className="modal-body">
+          <h2 id="exp-title" style={{ margin: '0 0 14px', fontSize: 18 }}>新增花費</h2>
+          <div className="field">
+            <label>金額 (₩ 韓元)</label>
+            <input className="num-input" type="number" inputMode="numeric"
+              value={krw} onChange={(e) => setKrw(e.target.value)} placeholder="0" autoFocus/>
+            {krw && <div className="num" style={{ fontSize: 12, color: 'var(--gray-500)', marginTop: 4 }}>
+              ≈ NT$ {twd.toLocaleString()}
+            </div>}
           </div>
-          <div className="field" style={{ flex: 1 }}>
-            <label>Day</label>
-            <select value={day} onChange={(e) => setDay(e.target.value)}>
-              <option value={1}>Day 1 · 5/21</option>
-              <option value={2}>Day 2 · 5/22</option>
-              <option value={3}>Day 3 · 5/23</option>
-              <option value={4}>Day 4 · 5/24</option>
-              <option value={5}>Day 5 · 5/25</option>
-            </select>
+          <div className="field">
+            <label>名稱</label>
+            <input value={name} onChange={(e) => setName(e.target.value)} placeholder="例:雪綠茶禮盒"/>
+          </div>
+          <div style={{ display: 'flex', gap: 10 }}>
+            <div className="field" style={{ flex: 1 }}>
+              <label>類別</label>
+              <select value={cat} onChange={(e) => setCat(e.target.value)}>
+                <option value="food">餐食</option>
+                <option value="shop">購物</option>
+                <option value="ticket">門票</option>
+                <option value="other">其他</option>
+              </select>
+            </div>
+            <div className="field" style={{ flex: 1 }}>
+              <label>Day</label>
+              <select value={day} onChange={(e) => setDay(Number(e.target.value))}>
+                <option value={1}>Day 1 · 5/21</option>
+                <option value={2}>Day 2 · 5/22</option>
+                <option value={3}>Day 3 · 5/23</option>
+                <option value={4}>Day 4 · 5/24</option>
+                <option value={5}>Day 5 · 5/25</option>
+              </select>
+            </div>
           </div>
         </div>
         <div className="actions">
@@ -919,19 +1023,37 @@ function ShoppingScreen() {
           </div>
         </div>
 
-        <div style={{ margin: '14px 16px 0', padding: '12px 14px',
-          background: 'var(--sea-100)', borderRadius: 12,
-          display: 'flex', alignItems: 'flex-start', gap: 10 }}>
-          <div style={{ width: 18, height: 18, color: 'var(--sea-700)', marginTop: 1 }}>{Icons.info}</div>
-          <div style={{ flex: 1 }}>
-            <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--sea-900)' }}>
-              單筆 ₩15,000 以上可退稅
+        {done === all.length && all.length > 0 ? (
+          <div style={{ margin: '14px 16px 0', padding: '14px 16px',
+            background: 'linear-gradient(135deg, var(--citrus-300), var(--citrus-100))',
+            borderRadius: 12, display: 'flex', alignItems: 'center', gap: 12 }}>
+            <div style={{ width: 32, height: 32, borderRadius: 16, background: 'rgba(255,255,255,0.7)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              color: 'var(--citrus-700)' }} aria-hidden="true">
+              <div style={{ width: 18, height: 18 }}>{Icons.check}</div>
             </div>
-            <div style={{ fontSize: 11, color: 'var(--sea-700)', marginTop: 2, lineHeight: 1.5 }}>
-              機場退稅機可辦理・記得保留收據與護照
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--ink)' }}>全部買齊!</div>
+              <div style={{ fontSize: 11, color: 'var(--citrus-700)', marginTop: 2 }}>
+                記得單筆 ₩15,000 以上保留收據,機場退稅
+              </div>
             </div>
           </div>
-        </div>
+        ) : (
+          <div style={{ margin: '14px 16px 0', padding: '12px 14px',
+            background: 'var(--sea-100)', borderRadius: 12,
+            display: 'flex', alignItems: 'flex-start', gap: 10 }}>
+            <div style={{ width: 18, height: 18, color: 'var(--sea-700)', marginTop: 1 }} aria-hidden="true">{Icons.info}</div>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--sea-900)' }}>
+                單筆 ₩15,000 以上可退稅
+              </div>
+              <div style={{ fontSize: 11, color: 'var(--sea-700)', marginTop: 2, lineHeight: 1.5 }}>
+                機場退稅機可辦理・記得保留收據與護照
+              </div>
+            </div>
+          </div>
+        )}
 
         {shopping.map((group, gi) => (
           <div key={gi}>
@@ -998,26 +1120,28 @@ function AddShopModal({ categories, onClose, onSave }) {
   };
 
   return (
-    <div className="modal-backdrop" onClick={onClose}>
+    <div className="modal-backdrop" onClick={onClose} role="dialog" aria-modal="true" aria-labelledby="shop-title">
       <div className="modal-sheet" onClick={(e) => e.stopPropagation()}>
-        <h3>新增必買項目</h3>
-        <div className="field">
-          <label>名稱</label>
-          <input value={name} onChange={(e) => setName(e.target.value)} autoFocus placeholder="例:火山泥面膜"/>
-        </div>
-        <div className="field">
-          <label>估價</label>
-          <input value={est} onChange={(e) => setEst(e.target.value)} placeholder="例:₩10,000"/>
-        </div>
-        <div className="field">
-          <label>地點</label>
-          <input value={where} onChange={(e) => setWhere(e.target.value)} placeholder="例:中央地下街"/>
-        </div>
-        <div className="field">
-          <label>分類</label>
-          <select value={cat} onChange={(e) => setCat(e.target.value)}>
-            {categories.map(c => <option key={c} value={c}>{c}</option>)}
-          </select>
+        <div className="modal-body">
+          <h2 id="shop-title" style={{ margin: '0 0 14px', fontSize: 18 }}>新增必買項目</h2>
+          <div className="field">
+            <label>名稱</label>
+            <input value={name} onChange={(e) => setName(e.target.value)} autoFocus placeholder="例:火山泥面膜"/>
+          </div>
+          <div className="field">
+            <label>估價</label>
+            <input value={est} onChange={(e) => setEst(e.target.value)} placeholder="例:₩10,000"/>
+          </div>
+          <div className="field">
+            <label>地點</label>
+            <input value={where} onChange={(e) => setWhere(e.target.value)} placeholder="例:中央地下街"/>
+          </div>
+          <div className="field">
+            <label>分類</label>
+            <select value={cat} onChange={(e) => setCat(e.target.value)}>
+              {categories.map(c => <option key={c} value={c}>{c}</option>)}
+            </select>
+          </div>
         </div>
         <div className="actions">
           <button className="btn btn-soft" onClick={onClose}>取消</button>
@@ -1235,20 +1359,32 @@ function TabBar() {
   ];
   const activeId = (route.name === 'dayDetail' || route.name === 'stopDetail') ? 'itin' : tab;
   return (
-    <div className="tabbar">
+    <nav className="tabbar" role="tablist" aria-label="主導覽">
       {tabs.map(t => (
-        <button key={t.id} className={`tab ${activeId === t.id ? 'active' : ''}`} onClick={() => goTab(t.id)}>
-          <div style={{ width: 22, height: 22 }}>{t.ic}</div>
+        <button key={t.id} className={`tab ${activeId === t.id ? 'active' : ''}`}
+          role="tab" aria-selected={activeId === t.id}
+          aria-current={activeId === t.id ? 'page' : undefined}
+          aria-label={t.label}
+          onClick={() => goTab(t.id)}>
+          <div style={{ width: 22, height: 22 }} aria-hidden="true">{t.ic}</div>
           {t.label}
         </button>
       ))}
-    </div>
+    </nav>
   );
 }
 
 /* ---------- App Root ---------- */
 function AppRoot() {
   const { tab, route } = useApp();
+  const phoneRef = useRef(null);
+
+  // Tab / 路由切換時 scroll 回頂(找 .app-content)
+  useEffect(() => {
+    const el = phoneRef.current?.querySelector('.app-content');
+    if (el) el.scrollTo({ top: 0, behavior: 'instant' in el ? 'instant' : 'auto' });
+  }, [tab, route]);
+
   let screen;
   if (route.name === 'dayDetail') {
     screen = <DayDetailScreen dayN={route.day}/>;
@@ -1260,7 +1396,7 @@ function AppRoot() {
   else if (tab === 'shop')    screen = <ShoppingScreen/>;
   else if (tab === 'info')    screen = <InfoScreen/>;
   return (
-    <div className="phone">
+    <div className="phone" ref={phoneRef}>
       {screen}
       <TabBar/>
     </div>
