@@ -136,6 +136,7 @@ function AppProvider({ children }) {
   const showToast = useCallback((msg, kind = '') => setToastState({ msg, kind }), []);
   const goTab = useCallback((id) => { setTab(id); setRoute({ name: 'tab' }); }, []);
   const openDay = useCallback((dayN) => setRoute({ name: 'dayDetail', day: dayN }), []);
+  const openStop = useCallback((dayN, stopIdx) => setRoute({ name: 'stopDetail', day: dayN, stop: stopIdx }), []);
   const goBack = useCallback(() => setRoute({ name: 'tab' }), []);
 
   const togglePack = (idx) => {
@@ -169,7 +170,7 @@ function AppProvider({ children }) {
 
   const value = {
     T, expenses, shopping, packList, budget, rate,
-    tab, goTab, route, openDay, goBack,
+    tab, goTab, route, openDay, openStop, goBack,
     togglePack, toggleShop, addExpense, deleteExpense, addShopItem,
     setBudget, showToast,
   };
@@ -418,7 +419,7 @@ function ItineraryScreen() {
 
 /* ---------- Day Detail ---------- */
 function DayDetailScreen({ dayN }) {
-  const { T, goBack } = useApp();
+  const { T, goBack, openStop } = useApp();
   const d = T.days.find(x => x.n === dayN) || T.days[1];
 
   return (
@@ -458,22 +459,29 @@ function DayDetailScreen({ dayN }) {
         <div className="card">
           <div style={{ padding: '16px 16px 8px' }}>
             <div className="timeline">
-              {d.stops.map((s, i) => (
-                <div key={i} className="tl-item">
-                  <div className="tl-time">{s.time}</div>
-                  <div className={`tl-dot ${s.type}`}/>
-                  <div style={{ display: 'flex', justifyContent: 'space-between',
-                    alignItems: 'flex-start', gap: 8 }}>
-                    <div style={{ flex: 1 }}>
-                      <div className="tl-name">{s.name}</div>
-                      <div className="tl-desc">{s.desc}</div>
-                    </div>
-                    <div style={{ width: 14, height: 14, color: 'var(--gray-300)', flexShrink: 0, marginTop: 4 }}>
-                      {Icons.chev}
+              {d.stops.map((s, i) => {
+                const clickable = s.type !== 'flight';
+                return (
+                  <div key={i} className="tl-item"
+                    onClick={clickable ? () => openStop(d.n, i) : undefined}
+                    style={{ cursor: clickable ? 'pointer' : 'default' }}>
+                    <div className="tl-time">{s.time}</div>
+                    <div className={`tl-dot ${s.type}`}/>
+                    <div style={{ display: 'flex', justifyContent: 'space-between',
+                      alignItems: 'flex-start', gap: 8 }}>
+                      <div style={{ flex: 1 }}>
+                        <div className="tl-name">{s.name}</div>
+                        <div className="tl-desc">{s.desc}</div>
+                      </div>
+                      {clickable && (
+                        <div style={{ width: 14, height: 14, color: 'var(--gray-300)', flexShrink: 0, marginTop: 4 }}>
+                          {Icons.chev}
+                        </div>
+                      )}
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         </div>
@@ -518,6 +526,152 @@ function DayDetailScreen({ dayN }) {
           </div>
         </div>
         <div style={{ height: 16 }}/>
+      </div>
+    </div>
+  );
+}
+
+/* ---------- Stop Detail ---------- */
+function StopDetailScreen({ dayN, stopIdx }) {
+  const { T, openDay } = useApp();
+  const d = T.days.find(x => x.n === dayN);
+  const s = d?.stops[stopIdx];
+  const [imgError, setImgError] = useState(false);
+
+  if (!s) {
+    return (
+      <div className="app screen-fade">
+        <div className="app-content">
+          <div className="empty">
+            <div className="em-title">找不到此景點</div>
+            <button className="btn btn-soft" onClick={() => openDay(dayN)} style={{ marginTop: 12 }}>
+              返回 Day {dayN}
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const typeLabel = s.type === 'sight' ? '景點'
+                  : s.type === 'shop'  ? '購物'
+                  : s.type === 'show'  ? '體驗'
+                  : '';
+
+  const back = () => openDay(dayN);
+
+  return (
+    <div className="app screen-fade">
+      <div className="app-content">
+        {/* Hero image */}
+        <div style={{ position: 'relative', height: 240, background: 'var(--sea-100)' }}>
+          {s.image && !imgError ? (
+            <img src={s.image} alt={s.name}
+              onError={() => setImgError(true)}
+              style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}/>
+          ) : (
+            <ImgPlaceholder label={s.name} h={240} tone={s.type === 'shop' ? 'citrus' : 'sea'}/>
+          )}
+          {/* Back button */}
+          <button onClick={back} style={{
+            position: 'absolute', top: 14, left: 14,
+            width: 36, height: 36, borderRadius: 18,
+            background: 'rgba(255,255,255,0.9)', border: 'none',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            backdropFilter: 'blur(8px)', cursor: 'pointer',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+          }}>
+            <div style={{ width: 18, height: 18, color: 'var(--ink)' }}>{Icons.chevLeft}</div>
+          </button>
+          {typeLabel && (
+            <div style={{ position: 'absolute', top: 16, right: 14 }}>
+              <Pill kind={s.type === 'shop' ? 'citrus' : ''}>{typeLabel}</Pill>
+            </div>
+          )}
+        </div>
+
+        {/* Title block */}
+        <div style={{ padding: '20px 20px 0' }}>
+          <div className="num" style={{ fontSize: 11, fontWeight: 600, color: 'var(--sea-700)',
+            letterSpacing: '0.12em', marginBottom: 6 }}>
+            DAY {d.n} · {d.date} · {s.time}
+          </div>
+          <h1 style={{ fontSize: 24, fontWeight: 700, margin: '0 0 8px', letterSpacing: '-0.02em' }}>
+            {s.name}
+          </h1>
+          {s.desc && (
+            <div style={{ fontSize: 14, color: 'var(--gray-700)', lineHeight: 1.55 }}>
+              {s.desc}
+            </div>
+          )}
+        </div>
+
+        {/* Intro */}
+        {s.intro && (
+          <>
+            <div className="sec-label">關於這裡</div>
+            <div className="card">
+              <div className="card-pad" style={{ fontSize: 14, color: 'var(--ink-soft)',
+                lineHeight: 1.75, whiteSpace: 'pre-line' }}>
+                {s.intro}
+              </div>
+            </div>
+          </>
+        )}
+
+        {/* Tips */}
+        {s.tips && s.tips.length > 0 && (
+          <>
+            <div className="sec-label">小提醒</div>
+            <div className="card">
+              <ul style={{ margin: 0, padding: 0, listStyle: 'none' }}>
+                {s.tips.map((t, i) => (
+                  <li key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 12,
+                    padding: '12px 16px',
+                    borderBottom: i < s.tips.length - 1 ? '1px solid var(--line)' : 'none',
+                    fontSize: 13, color: 'var(--ink-soft)', lineHeight: 1.55 }}>
+                    <span style={{ width: 22, height: 22, flexShrink: 0,
+                      borderRadius: 6, background: 'var(--citrus-100)',
+                      color: 'var(--citrus-700)', display: 'flex',
+                      alignItems: 'center', justifyContent: 'center',
+                      fontSize: 12, fontWeight: 700 }}>!</span>
+                    <span style={{ flex: 1 }}>{t}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </>
+        )}
+
+        {/* Address & map */}
+        {(s.address || s.mapUrl) && (
+          <>
+            <div className="sec-label">地點</div>
+            <div className="card">
+              <div className="card-pad">
+                {s.address && (
+                  <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start',
+                    marginBottom: s.mapUrl ? 12 : 0 }}>
+                    <div style={{ width: 18, height: 18, color: 'var(--sea-700)',
+                      flexShrink: 0, marginTop: 1 }}>{Icons.pin}</div>
+                    <div style={{ fontSize: 13, color: 'var(--ink-soft)', lineHeight: 1.5 }}>
+                      {s.address}
+                    </div>
+                  </div>
+                )}
+                {s.mapUrl && (
+                  <button className="btn btn-soft"
+                    onClick={() => window.open(s.mapUrl, '_blank', 'noopener,noreferrer')}
+                    style={{ width: '100%' }}>
+                    在 Google Maps 開啟
+                  </button>
+                )}
+              </div>
+            </div>
+          </>
+        )}
+
+        <div style={{ height: 24 }}/>
       </div>
     </div>
   );
@@ -1079,7 +1233,7 @@ function TabBar() {
     { id: 'shop',  label: '必買', ic: Icons.bag   },
     { id: 'info',  label: '須知', ic: Icons.info  },
   ];
-  const activeId = route.name === 'dayDetail' ? 'itin' : tab;
+  const activeId = (route.name === 'dayDetail' || route.name === 'stopDetail') ? 'itin' : tab;
   return (
     <div className="tabbar">
       {tabs.map(t => (
@@ -1098,6 +1252,8 @@ function AppRoot() {
   let screen;
   if (route.name === 'dayDetail') {
     screen = <DayDetailScreen dayN={route.day}/>;
+  } else if (route.name === 'stopDetail') {
+    screen = <StopDetailScreen dayN={route.day} stopIdx={route.stop}/>;
   } else if (tab === 'home')  screen = <HomeScreen/>;
   else if (tab === 'itin')    screen = <ItineraryScreen/>;
   else if (tab === 'money')   screen = <ExpensesScreen/>;
