@@ -6,7 +6,14 @@
   <meta name="apple-mobile-web-app-capable" content="yes"/>
   <meta name="apple-mobile-web-app-status-bar-style" content="default"/>
   <meta name="theme-color" content="#FAF7F2"/>
+  <meta name="description" content="ITRI 資通服科福委會 5 天 4 夜濟州島員工旅遊 App — 行程、記帳、必買、須知一次搞定。"/>
+  <meta property="og:title" content="濟州島員工旅遊 · 2026/5/21–5/25"/>
+  <meta property="og:description" content="山海人文・品味濟州 — 5 天 4 夜行程個人助手"/>
+  <meta property="og:type" content="website"/>
+  <meta property="og:url" content="https://fankurt.github.io/jeju_trip_app/"/>
+  <meta name="twitter:card" content="summary"/>
   <title>濟州島員工旅遊 · 2026/5/21–5/25</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,&lt;svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'&gt;&lt;defs&gt;&lt;linearGradient id='g' x1='0' y1='0' x2='1' y2='1'&gt;&lt;stop offset='0' stop-color='%232F7388'/&gt;&lt;stop offset='1' stop-color='%23E68A2C'/&gt;&lt;/linearGradient&gt;&lt;/defs&gt;&lt;rect width='64' height='64' rx='14' fill='url(%23g)'/&gt;&lt;path d='M12 44 Q 22 34 32 40 T 52 38 V 52 H 12 Z' fill='%23B8DAE2' opacity='0.9'/&gt;&lt;circle cx='44' cy='22' r='7' fill='%23FAF7F2'/&gt;&lt;/svg&gt;"/>
   <link rel="stylesheet" href="styles.css"/>
   <script crossorigin src="https://unpkg.com/react@18.3.1/umd/react.production.min.js"></script>
   <script crossorigin src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js"></script>
@@ -410,17 +417,22 @@ function ItineraryScreen() {
             <div className="hr"/>
             <div style={{ padding: '12px 16px 14px' }}>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
-                {d.stops.slice(0, 4).map((s, i) => (
-                  <span key={i} style={{ fontSize: 11, color: 'var(--gray-700)',
-                    background: 'var(--bg-soft)', padding: '3px 8px', borderRadius: 999 }}>
-                    {s.name}
-                  </span>
-                ))}
-                {d.stops.length > 4 && (
-                  <span style={{ fontSize: 11, color: 'var(--gray-500)', padding: '3px 4px' }}>
-                    +{d.stops.length - 4}
-                  </span>
-                )}
+                {(() => {
+                  const sights = d.stops.filter(s => s.type !== 'flight');
+                  return <>
+                    {sights.slice(0, 4).map((s, i) => (
+                      <span key={i} style={{ fontSize: 11, color: 'var(--gray-700)',
+                        background: 'var(--bg-soft)', padding: '3px 8px', borderRadius: 999 }}>
+                        {s.name}
+                      </span>
+                    ))}
+                    {sights.length > 4 && (
+                      <span style={{ fontSize: 11, color: 'var(--gray-500)', padding: '3px 4px' }}>
+                        +{sights.length - 4}
+                      </span>
+                    )}
+                  </>;
+                })()}
               </div>
               <div style={{ display: 'flex', gap: 14, marginTop: 10, fontSize: 11, color: 'var(--gray-500)' }}>
                 <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
