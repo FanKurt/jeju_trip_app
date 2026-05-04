@@ -8,7 +8,7 @@ window.TRIP = {
     out:  { code: 'IT-654', from: '桃園 TPE', to: '濟州 CJU', dep: '07:05', arr: '10:00', date: '5/21 (四)', airline: '台灣虎航' },
     back: { code: 'IT-655', from: '濟州 CJU', to: '桃園 TPE', dep: '11:00', arr: '12:15', date: '5/25 (一)', airline: '台灣虎航' },
   },
-  budget: { total: 40000, spent: 0 },
+  budget: { total: 20000, spent: 0 },
   rate: 0.0228,
   days: [
     {
@@ -22,7 +22,7 @@ window.TRIP = {
           desc: '海邊馬造型燈塔,可愛打卡點',
           intro: '梨湖紅白馬燈塔是濟州島最有辨識度的打卡地標,座落在濟州市西側的梨湖泰嶼海邊兩側防波堤上。兩座以濟州島原生「濟州馬」為原型設計的燈塔,於 2009 年 2 月落成,東側為純白、西側為純紅,各高 12 公尺、長 8 公尺,已被金氏世界紀錄認證為「世界最大動物造型燈塔」。馬匹自古便是濟州人耕作、運輸、軍事的夥伴,以馬為形的燈塔,既為夜航的漁船指路,也象徵著島嶼與駿馬深厚的文化羈絆。距離濟州機場開車僅約 10 分鐘,非常適合排在抵達當天的第一站,沿著海岸散步、踏踏黑沙、看夕陽把紅白馬染成金色,是體驗濟州海風最輕鬆寫意的方式。',
           address: 'Iho-dong, Jeju-si, Jeju-do',
-          image: '',
+          image: 'https://upload.wikimedia.org/wikipedia/commons/2/28/Iho_Tewoo_Beach_01.jpg',
           tips: ['離濟州機場約 10 分鐘車程', '傍晚拍夕陽最美,建議黃昏前抵達', '海風強,記得加件外套'],
           mapUrl: 'https://www.google.com/maps/search/?api=1&query=Iho%20Tewoo%20Horse%20Lighthouses%20Jeju'
         },
@@ -92,7 +92,7 @@ window.TRIP = {
           desc: '一小時極限特技表演',
           intro: 'HAPPY TOWN 是濟州知名的「Circus World 藝術馬戲劇場」所在地,就在噢雪綠茶博物館往南車程 5 分鐘左右。表演團隊由 22 位 10 歲到 29 歲的中國頂級雜技演員組成,節目包含空中綢吊、頂技、單輪車、瑜伽軟功、高空鞦韆,以及全場最受歡迎的「死亡飛輪」摩托車秀——七位女騎士在直徑僅 7 公尺的鐵球籠內同時繞圈高速翻騰,引擎聲、火花和驚呼聲幾乎要掀掉屋頂,近距離看真的會讓人手心冒汗。劇場為室內表演,不受天氣影響,語言隔閡也低,親子、長輩、情侶都很適合,演出全長約 50 至 60 分鐘。對於想在濟州行程裡安排一場「靜態景點之外的腎上腺素」,這裡是最好下手的選項。',
           address: '214, Donggwang-ro, Andeok-myeon, Seogwipo-si, Jeju-do',
-          image: '',
+          image: 'https://images.unsplash.com/photo-1773502978038-c5c7fd1ecab6?w=800',
           tips: ['每日四場:10:30 / 13:30 / 15:30 / 17:30', '建議提前 15 分鐘入場找座位', 'Klook、KKday 線上購票通常較便宜'],
           mapUrl: 'https://www.google.com/maps/search/?api=1&query=Jeju+Circus+World'
         },
@@ -101,7 +101,7 @@ window.TRIP = {
           desc: '沉浸式媒體藝術,10 個主題展區',
           intro: 'Arte Museum 濟州館由韓國頂尖數位設計公司 d\'strict 操刀,是全韓國最大、也是品牌的第一間沉浸式媒體藝術館,2020 年於濟州愛月邑開幕。場地原本是一座占地 4,628 平方公尺、挑高 10 公尺的舊喇叭工廠,改造後保留了粗獷的工業骨架,再用 360 度投影、空間音響與專屬香氛打造出十個截然不同的展區。整體主題是「ETERNAL NATURE 永恆的自然」,你會走進瀑布從天而降的洞窟、海浪打在牆上的「WAVE」展間、開滿四季花的祕密花園,還有專為濟州量身打造的「JEJU」沉浸式影像。每個房間幾乎都能站著拍出像電影海報的照片,是近年濟州 IG 打卡聲量最高的景點之一。同集團在江陵、麗水、釜山也都有姊妹館,但濟州館規模最大、氣氛也最完整。',
           address: '478, Eorimbi-ro, Aewol-eup, Jeju-si, Jeju-do',
-          image: '',
+          image: 'https://images.unsplash.com/photo-1768666608287-6176bc385776?w=800',
           tips: ['開放 10:00–20:00,最後入場 19:00', '全年無休,室內展館不受天氣影響', '建議停留 1.5–2 小時拍照取景'],
           mapUrl: 'https://www.google.com/maps/search/?api=1&query=Arte+Museum+Jeju'
         },
@@ -110,7 +110,7 @@ window.TRIP = {
           desc: '贈送泰迪熊吊飾一隻 🧸',
           intro: '泰迪熊野生動物王國(Teseum, 테지움)是世界第一座以「填充玩偶」呈現整片野生動物世界的主題館,位於濟州愛月邑,從 Arte Museum 過去開車不到 10 分鐘。一樓是陸地動物區,大象、獅子、老虎、長頸鹿、北極熊都用真實比例的縫製玩偶呈現,搭配岩石、草原、雪地造景,小朋友走進去會以為自己誤闖叢林,還能近距離抱著泰迪獅子合照。二樓是海洋動物區,鯊魚、海豚、章魚、海龜、紅鶴一字排開,主打一隻 4 公尺高的巨型泰迪熊與藝術畫廊區,展出以神話與電影為主題的限定泰迪熊。戶外還有 Safari 園區、紀念品店和地下室手工披薩餐廳,適合親子或想找療癒可愛系景點的旅人,逛完全程約 1.5 小時。',
           address: '2159, Pyeonghwa-ro, Aewol-eup, Jeju-si, Jeju-do',
-          image: '',
+          image: 'https://upload.wikimedia.org/wikipedia/commons/f/f2/Bao-tang-gau-bong-teddy-jeju.jpg',
           tips: ['每日 08:30–19:00,閉館前 1 小時停止售票', '全年無休,免費停車', '建議搭配 Arte Museum 同日順遊'],
           mapUrl: 'https://www.google.com/maps/search/?api=1&query=Teseum+Jeju'
         },
@@ -205,7 +205,7 @@ window.TRIP = {
           desc: '韓國獨特洗澡文化體驗',
           intro: '龍頭岩海水樂園就在龍頭岩旁、濟州機場走路十分鐘可達,是濟州市區最具代表性的傳統汗蒸幕,當地人和觀光客都愛來。最大特色是直接抽取地下海水加溫成湯,鹹度足、礦物質豐富,泡完皮膚滑嫩、解疲勞效果一流;館內分男女湯,有各式溫度的海水池、冷水池、露天池,以及黃土窯、鹽窯、紫水晶窯等多種主題汗蒸房,還能在大廳穿著羊頭巾喝甜米露、吃韓式蒸蛋。這裡是體驗韓國澡堂文化最入門的選擇:先沐浴 → 入池泡湯 → 進汗蒸房蒸汗 → 出來補水休息,可以反覆循環。可加價請阿珠媽搓澡,搓下來的「黑泥條」會讓你終身難忘。位置近機場,很多旅客把這裡安排在抵達當天或回程前。',
           address: '11 Yongduam-gil, Jeju-si, Jeju-do',
-          image: '',
+          image: 'https://upload.wikimedia.org/wikipedia/commons/c/c2/Yongduam_in_jeju.jpg',
           tips: ['24 小時營業,夜宿汗蒸幕也 OK', '搓澡需另外加價、用韓圜現金', '館內須全裸入浴,有刺青可能被婉拒'],
           mapUrl: 'https://www.google.com/maps/search/?api=1&query=Yongduam%20Haesu%20Spa%20Land'
         },
