@@ -1421,25 +1421,6 @@ function InfoScreen() {
           </div>
         </div>
 
-        <div className="sec-label">天氣 · 穿著</div>
-        <div className="card">
-          <div className="card-pad" style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-            <div style={{ width: 50, height: 50, borderRadius: 14,
-              background: 'var(--citrus-100)', color: 'var(--citrus-700)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <div style={{ width: 28, height: 28 }}>{Icons.sun}</div>
-            </div>
-            <div style={{ flex: 1 }}>
-              <div className="num" style={{ fontSize: 20, fontWeight: 700, color: 'var(--ink)' }}>
-                {N.weather.range}
-              </div>
-              <div style={{ fontSize: 12, color: 'var(--gray-500)', marginTop: 2 }}>
-                {N.weather.rain} · {N.weather.tip}
-              </div>
-            </div>
-          </div>
-        </div>
-
         <div className="sec-label">行李規定</div>
         <div className="card">
           <div className="card-pad" style={{ display: 'flex', gap: 12 }}>
