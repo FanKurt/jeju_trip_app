@@ -276,10 +276,6 @@ window.TRIP = {
     emergency: [
       { name: '領隊 鄧文凱',           phone: '0920-080070' },
       { name: '業務 陳金隆(金龍永盛)', phone: '0919-690255' },
-      { name: '當地導遊',              phone: '+82-10-XXXX-XXXX' },
-      { name: '駐韓國代表處',          phone: '+82-2-6329-6000' },
-      { name: '韓國報案',              phone: '112' },
-      { name: '韓國救護',              phone: '119' },
     ],
     weather: { range: '15 – 22°C', rain: '偶陣雨', tip: '洋蔥式穿搭,準備薄外套' },
     refund: {
