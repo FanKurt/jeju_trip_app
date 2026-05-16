@@ -1518,9 +1518,9 @@ function InfoScreen() {
           ))}
         </div>
 
-        <div className="sec-label">退稅小幫手</div>
+        <div className="sec-label">購物與退稅</div>
         <div className="card">
-          <div className="card-pad">
+          <div className="card-pad" style={{ paddingBottom: 12 }}>
             <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 6 }}>{N.refund.threshold}</div>
             <div style={{ fontSize: 12, color: 'var(--gray-500)', marginBottom: 12 }}>{N.refund.where}</div>
             <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--gray-700)',
@@ -1533,6 +1533,63 @@ function InfoScreen() {
                 </span>
               ))}
             </div>
+          </div>
+          <div style={{ padding: '12px 16px', borderTop: '1px solid var(--line)' }}>
+            <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--sea-700)',
+              letterSpacing: '0.1em', marginBottom: 6 }}>適用對象</div>
+            <ul style={{ margin: 0, paddingLeft: 18, fontSize: 13, color: 'var(--ink)', lineHeight: 1.7 }}>
+              {N.refund.eligible.map((it, i) => <li key={i}>{it}</li>)}
+            </ul>
+          </div>
+          <div style={{ padding: '12px 16px', borderTop: '1px solid var(--line)' }}>
+            <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--sea-700)',
+              letterSpacing: '0.1em', marginBottom: 6 }}>商品與條件</div>
+            <ul style={{ margin: 0, paddingLeft: 18, fontSize: 13, color: 'var(--ink)', lineHeight: 1.7 }}>
+              {N.refund.conditions.map((it, i) => <li key={i}>{it}</li>)}
+            </ul>
+          </div>
+          <div style={{ padding: '12px 16px', borderTop: '1px solid var(--line)' }}>
+            <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--sea-700)',
+              letterSpacing: '0.1em', marginBottom: 8 }}>退稅方式</div>
+            {N.refund.methods.map((m, i) => (
+              <div key={i} style={{ marginBottom: i < N.refund.methods.length - 1 ? 10 : 0 }}>
+                <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--citrus-700)', marginBottom: 2 }}>
+                  {m.title}
+                </div>
+                <div style={{ fontSize: 12, color: 'var(--ink)', lineHeight: 1.6 }}>{m.desc}</div>
+              </div>
+            ))}
+          </div>
+          <div style={{ padding: '10px 16px', borderTop: '1px solid var(--line)',
+            background: 'var(--bg-soft)', fontSize: 11, color: 'var(--gray-500)', lineHeight: 1.5 }}>
+            ⓘ {N.refund.notice}
+          </div>
+        </div>
+
+        <div className="sec-label">回台海關與其限制</div>
+        <div className="card">
+          <div style={{ padding: '12px 16px', borderBottom: '1px solid var(--line)' }}>
+            <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--danger)', marginBottom: 8 }}>
+              ⚠ 嚴禁攜帶
+            </div>
+            <ul style={{ margin: 0, paddingLeft: 18, fontSize: 13, color: 'var(--ink)', lineHeight: 1.7 }}>
+              {N.customs.banned.map((it, i) => <li key={i}>{it}</li>)}
+            </ul>
+            <div style={{ fontSize: 12, color: 'var(--gray-500)', marginTop: 8 }}>
+              {N.customs.warn}
+            </div>
+          </div>
+          <div style={{ padding: '12px 16px', borderBottom: '1px solid var(--line)',
+            background: 'var(--citrus-100)' }}>
+            <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--citrus-700)', marginBottom: 4 }}>
+              🐷 疫區豬肉製品罰則
+            </div>
+            <div style={{ fontSize: 12, color: 'var(--ink)', lineHeight: 1.6 }}>
+              {N.customs.pork}
+            </div>
+          </div>
+          <div style={{ padding: '12px 16px', fontSize: 12, color: 'var(--gray-500)', lineHeight: 1.6 }}>
+            ⓘ {N.customs.tip}
           </div>
         </div>
 
