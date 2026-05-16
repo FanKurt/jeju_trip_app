@@ -661,7 +661,7 @@ function DayDetailScreen({ dayN }) {
         <div className="sec-label">今日餐食</div>
         <div className="card">
           {[
-            { l: '早餐', v: '飯店內用' },
+            { l: '早餐', v: d.meals.breakfast || '飯店內享用' },
             { l: '午餐', v: d.meals.lunch },
             { l: '晚餐', v: d.meals.dinner },
           ].map((m, i, arr) => (

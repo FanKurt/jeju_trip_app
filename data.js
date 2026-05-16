@@ -13,8 +13,8 @@ window.TRIP = {
   days: [
     {
       n: 1, date: '5/21 四', title: '抵達・市區漫遊',
-      hotel: 'Hotel Shalom Jeju (四星市區)',
-      meals: { lunch: '開城會館・鮑魚人蔘雞', dinner: '燒烤五花肉 + 韓式年糕 + 冬粉吃到飽' },
+      hotel: '濟州格洛斯特飯店',
+      meals: { breakfast: '機上簡餐', lunch: '鮑魚人蔘雞餐', dinner: '燒烤五花肉 + 韓式年糕 + 韓式冬粉吃到飽' },
       stops: [
         { time: '03:00', name: '工研院中興院區驛站前', type: 'flight', desc: '集合出發 · 金龍永盛旅行社' },
         { time: '04:00', name: '桃園國際機場第一航廈', type: 'flight', desc: '集合報到 · 辦理登機手續' },
@@ -68,8 +68,8 @@ window.TRIP = {
     },
     {
       n: 2, date: '5/22 五', title: '瀑布・茶園・媒體藝術',
-      hotel: 'Hotel Shalom Jeju (四星市區)',
-      meals: { lunch: '馬鈴薯豬骨湯 + 海苔炒飯', dinner: '海鮮火鍋 + 季節小菜' },
+      hotel: '濟州格洛斯特飯店',
+      meals: { breakfast: '飯店內享用', lunch: '馬鈴薯豬骨湯 + 海苔炒飯', dinner: '海鮮火鍋 + 季節小菜' },
       stops: [
         {
           time: '09:00', name: '天帝淵瀑布', type: 'sight',
@@ -120,8 +120,8 @@ window.TRIP = {
     },
     {
       n: 3, date: '5/23 六', title: '世界遺產・日出峰',
-      hotel: 'Regent Marine The Blue (海濱)',
-      meals: { lunch: '豬肉魷魚壽喜燒 + 漢拿山炒飯', dinner: '明倫進士・烤排骨吃到飽' },
+      hotel: '濟州麗晶海洋飯店',
+      meals: { breakfast: '飯店內享用', lunch: '豬肉魷魚壽喜燒 + 漢拿山炒飯', dinner: '明倫進士・烤排骨吃到飽' },
       stops: [
         {
           time: '09:00', name: '李仲燮藝術街', type: 'sight',
@@ -163,8 +163,8 @@ window.TRIP = {
     },
     {
       n: 4, date: '5/24 日', title: '漢拏山・龍頭岩・汗蒸幕',
-      hotel: 'Regent Marine The Blue (海濱)',
-      meals: { lunch: '烤白帶魚+奶油鮑魚+海帶湯', dinner: '豪華海鮮嫩雞鮑魚鍋 (4人/鍋 ₩88,000)' },
+      hotel: '濟州麗晶海洋飯店',
+      meals: { breakfast: '飯店內享用', lunch: '烤白帶魚 + 奶油鮑魚鍋', dinner: '豪華海鮮嫩雞鮑魚鍋' },
       stops: [
         {
           time: '09:00', name: '漢拏山國家公園', type: 'sight',
@@ -216,7 +216,7 @@ window.TRIP = {
     {
       n: 5, date: '5/25 一', title: '回家',
       hotel: '溫暖的家 ❤️',
-      meals: { lunch: '機上簡餐', dinner: '—' },
+      meals: { breakfast: '飯店內享用', lunch: '機上簡餐', dinner: '—' },
       stops: [
         { time: '07:20', name: '濟州國際機場',   type: 'flight', desc: '辦理出境手續' },
         { time: '10:20', name: '濟州 → 桃園',    type: 'flight', desc: '虎航 IT-655' },
