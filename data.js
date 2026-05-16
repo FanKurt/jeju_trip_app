@@ -5,8 +5,8 @@ window.TRIP = {
   dates: '2026.05.21 – 05.25',
   org: '資通服科福委會',
   flights: {
-    out:  { code: 'IT-654', from: '桃園 TPE', to: '濟州 CJU', dep: '07:05', arr: '10:00', date: '5/21 (四)', airline: '台灣虎航' },
-    back: { code: 'IT-655', from: '濟州 CJU', to: '桃園 TPE', dep: '11:00', arr: '12:15', date: '5/25 (一)', airline: '台灣虎航' },
+    out:  { code: 'IT-654', from: '桃園 TPE', to: '濟州 CJU', dep: '06:40', arr: '09:45', date: '5/21 (四)', airline: '台灣虎航' },
+    back: { code: 'IT-655', from: '濟州 CJU', to: '桃園 TPE', dep: '10:20', arr: '11:35', date: '5/25 (一)', airline: '台灣虎航' },
   },
   budget: { total: 20000, spent: 0 },
   rate: 0.0228,
@@ -16,7 +16,7 @@ window.TRIP = {
       hotel: 'Hotel Shalom Jeju (四星市區)',
       meals: { lunch: '開城會館・鮑魚人蔘雞', dinner: '燒烤五花肉 + 韓式年糕 + 冬粉吃到飽' },
       stops: [
-        { time: '07:05', name: '桃園機場 → 濟州', type: 'flight', desc: '虎航 IT-654' },
+        { time: '06:40', name: '桃園機場 → 濟州', type: 'flight', desc: '虎航 IT-654' },
         {
           time: '11:30', name: '梨湖紅白馬燈塔', type: 'sight',
           desc: '海邊馬造型燈塔,可愛打卡點',
@@ -216,9 +216,9 @@ window.TRIP = {
       hotel: '溫暖的家 ❤️',
       meals: { lunch: '機上簡餐', dinner: '—' },
       stops: [
-        { time: '08:00', name: '濟州國際機場',   type: 'flight', desc: '辦理出境手續' },
-        { time: '11:00', name: '濟州 → 桃園',    type: 'flight', desc: '虎航 IT-655' },
-        { time: '12:15', name: '抵達桃園・賦歸', type: 'flight', desc: '結束五天旅程' },
+        { time: '07:20', name: '濟州國際機場',   type: 'flight', desc: '辦理出境手續' },
+        { time: '10:20', name: '濟州 → 桃園',    type: 'flight', desc: '虎航 IT-655' },
+        { time: '11:35', name: '抵達桃園・賦歸', type: 'flight', desc: '結束五天旅程' },
       ],
     },
   ],
